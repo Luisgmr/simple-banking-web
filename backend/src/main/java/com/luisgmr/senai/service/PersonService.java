@@ -5,16 +5,19 @@ import com.luisgmr.senai.exception.EntityNotFoundException;
 import com.luisgmr.senai.exception.UniqueColumnException;
 import com.luisgmr.senai.repository.PersonRepository;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class PersonService {
     private final PersonRepository repo;
-    public PersonService(PersonRepository repo) { this.repo = repo; }
 
-    public List<Person> list() { return repo.findAll(); }
+    public List<Person> list() {
+        return repo.findAll();
+    }
 
     @Transactional
     public Person create(Person p) {
@@ -37,5 +40,8 @@ public class PersonService {
     }
 
     @Transactional
-    public void delete(Long id) { repo.delete(find(id)); }
+    public void delete(Long id) {
+        repo.delete(find(id));
+    }
+
 }
