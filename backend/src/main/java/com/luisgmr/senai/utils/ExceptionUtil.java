@@ -38,4 +38,8 @@ public final class ExceptionUtil {
         throw new BusinessException("Não é possível deletar uma pessoa que possui contas com movimentações");
     }
 
+    public static void invalidCpf() {
+        throw new IllegalArgumentException("CPF inválido");
+    }
+
 }

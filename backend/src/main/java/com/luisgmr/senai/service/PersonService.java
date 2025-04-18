@@ -3,6 +3,7 @@ package com.luisgmr.senai.service;
 import com.luisgmr.senai.domain.Account;
 import com.luisgmr.senai.domain.Person;
 import com.luisgmr.senai.repository.*;
+import com.luisgmr.senai.utils.CpfValidator;
 import com.luisgmr.senai.utils.ExceptionUtil;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -22,11 +23,14 @@ public class PersonService {
     }
 
     @Transactional
-    public Person create(Person p) {
-        if (repository.findByCpf(p.getCpf()).isPresent())
+    public Person create(Person person) {
+        if (!CpfValidator.isValid(person.getCpf()))
+            ExceptionUtil.invalidCpf();
+
+        if (repository.findByCpf(person.getCpf()).isPresent())
             ExceptionUtil.cpfAlreadyExists();
 
-        return repository.save(p);
+        return repository.save(person);
     }
 
     public Person find(Long id) {

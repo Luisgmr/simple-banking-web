@@ -3,9 +3,11 @@ package com.luisgmr.senai.dto.request;
 import com.luisgmr.senai.domain.Transaction;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 
+@Builder
 public record TransactionRequestDTO(
         @NotNull(message = "O tipo da transação é obrigatório")
         Transaction.Type type,

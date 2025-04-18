@@ -131,6 +131,16 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.5.2</version>
+				<configuration>
+					<includes>
+						<include>**/*Test</include>
+						<include>**/*IT</include>
+					</includes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
