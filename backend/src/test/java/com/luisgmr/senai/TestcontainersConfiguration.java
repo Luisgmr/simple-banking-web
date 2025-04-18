@@ -1,4 +1,4 @@
-package com.luisgmr.backend;
+package com.luisgmr.senai;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;

@@ -27,7 +27,7 @@ services:
       mysql:
           condition: service_healthy
     environment:
-      SPRING_PROFILES_ACTIVE: default
+      SPRING_PROFILES_ACTIVE: docker
     ports:
       - "8080:8080"
     networks: [ senai-net ]
