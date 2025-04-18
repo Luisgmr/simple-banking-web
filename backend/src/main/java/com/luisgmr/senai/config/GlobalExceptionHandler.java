@@ -24,6 +24,7 @@ public class GlobalExceptionHandler {
             case "cpf" -> "CPF inválido. Deve conter 11 dígitos numéricos";
             case "name" -> "Nome é obrigatório";
             case "address" -> "Endereço é obrigatório";
+            case "accountNumber" -> "O número da conta deve conter apenas números";
             default -> firstError.getDefaultMessage();
         };
 
