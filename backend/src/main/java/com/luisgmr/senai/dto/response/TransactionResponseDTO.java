@@ -1,12 +1,11 @@
-package com.luisgmr.senai.dto;
+package com.luisgmr.senai.dto.response;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public record TransactionDTO(
+public record TransactionResponseDTO(
         Long id,
         String type,
         BigDecimal amount,
-        LocalDateTime timestamp,
-        Long accountId
+        LocalDateTime timestamp
 ) {}

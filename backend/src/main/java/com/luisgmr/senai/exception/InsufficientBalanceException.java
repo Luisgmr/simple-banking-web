@@ -1,5 +1,7 @@
 package com.luisgmr.senai.exception;
 
 public class InsufficientBalanceException extends RuntimeException {
-    public InsufficientBalanceException(String msg) { super(msg); }
+    public InsufficientBalanceException() {
+        super("Saldo insuficiente");
+    }
 }

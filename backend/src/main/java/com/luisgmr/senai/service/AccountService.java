@@ -2,11 +2,8 @@ package com.luisgmr.senai.service;
 
 import com.luisgmr.senai.domain.Account;
 import com.luisgmr.senai.domain.Person;
-import com.luisgmr.senai.exception.BusinessException;
-import com.luisgmr.senai.exception.EntityNotFoundException;
-import com.luisgmr.senai.exception.UniqueColumnException;
-import com.luisgmr.senai.repository.AccountRepository;
-import com.luisgmr.senai.repository.PersonRepository;
+import com.luisgmr.senai.repository.*;
+import com.luisgmr.senai.utils.ExceptionUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,23 +15,22 @@ import java.util.List;
 public class AccountService {
     private final AccountRepository accountRepository;
     private final PersonRepository personRepository;
+    private final TransactionRepository transactionRepository;
 
     public List<Account> list() {
         return accountRepository.findAll();
     }
 
     public Account find(Long id) {
-        return accountRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada com o ID " + id));
+        return accountRepository.findById(id).orElseThrow(ExceptionUtil.accountNotFoundSupplier(id));
     }
 
     @Transactional
     public Account create(Long personId, String number) {
         if (accountRepository.existsByAccountNumber(number))
-            throw new UniqueColumnException("O número da conta " + number + " já existe");
+            ExceptionUtil.accountNumberAlreadyExists(number);
 
-        Person owner = personRepository.findById(personId)
-                .orElseThrow(() -> new EntityNotFoundException("Pessoa com o ID " + personId + " não encontrada"));
+        Person owner = personRepository.findById(personId).orElseThrow(ExceptionUtil.personNotFoundSupplier(personId));
 
         Account acc = new Account();
         acc.setAccountNumber(number);
@@ -48,10 +44,10 @@ public class AccountService {
         Account account = find(id);
 
         if (account.getAccountNumber().equals(newNumber))
-            throw new BusinessException("O novo número da conta deve ser diferente do número atual");
+            ExceptionUtil.newAccountNumberEquals();
 
         if (accountRepository.existsByAccountNumber(newNumber))
-            throw new UniqueColumnException("O número da conta " + newNumber + " já existe");
+            ExceptionUtil.accountNumberAlreadyExists(newNumber);
 
         account.setAccountNumber(newNumber);
         return accountRepository.save(account);
@@ -59,6 +55,13 @@ public class AccountService {
 
     @Transactional
     public void delete(Long id) {
-        accountRepository.delete(find(id));
+        Account account = find(id);
+
+        if (transactionRepository.existsByAccount(account))
+            ExceptionUtil.accountHasTransactions();
+
+        accountRepository.delete(account);
     }
+
+
 }
