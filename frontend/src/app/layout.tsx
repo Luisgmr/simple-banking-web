@@ -1,15 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Rethink_Sans } from "next/font/google"
+import {Navbar} from "@/components/Navbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const rethinkSans = Rethink_Sans({
+    subsets: ["latin"],
+    display: "swap"
 });
 
 export const metadata: Metadata = {
@@ -22,13 +18,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
-  );
+    return (
+        <html lang="pt-BR" className={rethinkSans.className}>
+            <body className={"flex flex-col p-4 antialiased"}>
+                <Navbar/>
+                {children}
+            </body>
+        </html>
+    );
 }
