@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -21,7 +20,7 @@ public class AccountController {
 
     @GetMapping
     public List<AccountResponseDTO> list() {
-        return service.list().stream().map(mapper::toResponse).collect(Collectors.toList());
+        return service.list().stream().map(mapper::toResponse).toList();
     }
 
     @GetMapping("/{id}")

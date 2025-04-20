@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -23,7 +22,7 @@ public class PersonController {
 
     @GetMapping
     public List<PersonDTO> list() {
-        return service.list().stream().map(personMapper::toDto).collect(Collectors.toList());
+        return service.list().stream().map(personMapper::toDto).toList();
     }
 
     @GetMapping("/{id}")
@@ -33,7 +32,7 @@ public class PersonController {
 
     @GetMapping("/{id}/accounts")
     public List<AccountSelectResponseDTO> getAccounts(@PathVariable Long id) {
-        return service.findAccounts(id).stream().map(accountMapper::toSelectResponse).collect(Collectors.toList());
+        return service.findAccounts(id).stream().map(accountMapper::toSelectResponse).toList();
     }
 
     @PostMapping
