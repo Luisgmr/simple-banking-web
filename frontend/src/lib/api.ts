@@ -51,6 +51,16 @@ export type Transaction = {
     type: "DEPOSIT" | "WITHDRAW";
 };
 
+export async function getPaginatedPersons(
+    page = 0,
+    size = 5
+): Promise<PageResponse<Person>> {
+    const res = await api.get(`/persons`, {
+        params: {page, size}
+    });
+    return res.data;
+}
+
 export const getPersons = async (): Promise<Person[]> => {
     const { data } = await api.get<Person[]>("/persons");
     return data;

@@ -1,43 +1,56 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X } from "phosphor-react";
+import { Pen, Trash, X } from "phosphor-react";
 import { PersonForm } from "./PersonForm";
-import * as api from "@/lib/api";
 import { toastError, toastSuccess } from "@/lib/utils";
+import {getPaginatedPersons, deletePerson, PageResponse, Person} from "@/lib/api";
+import { PaginatedTable } from "@/components/PaginatedTable";
 
 export function PersonSection() {
-    const [list, setList] = useState<api.Person[]>([]);
-    const [editing, setEditing] = useState<api.Person | null>(null);
+    const [editing, setEditing] = useState<Person | null>(null);
+    const [pageData, setPageData] = useState<PageResponse<Person>>({
+        content: [],
+        currentPage: 0,
+        totalPages: 0,
+        totalElements: 0
+    });
+    const pageSize = 5;
 
-    // carrega lista
+    async function loadPersons(page = 0) {
+        try {
+            const data = await getPaginatedPersons(page, pageSize);
+            setPageData(data);
+        } catch (e: any) {
+            toastError(e.message);
+        }
+    }
+
     useEffect(() => {
-        api.getPersons().then(setList).catch((e) => toastError(e.message));
+        loadPersons(0);
     }, []);
-
-    const refresh = () =>
-        api
-            .getPersons()
-            .then(setList)
-            .catch((e) => toastError(e.message));
 
     const handleDelete = async (id: number) => {
         if (!confirm("Deseja realmente excluir?")) return;
         try {
-            await api.deletePerson(id);
+            await deletePerson(id);
             toastSuccess("Pessoa excluída");
-            refresh();
+            loadPersons(pageData.currentPage);
             if (editing?.id === id) setEditing(null);
         } catch (e: any) {
             toastError(e.message);
         }
     };
 
+    const onPageChange = (newPage: number) => {
+        const pageIndex = newPage - 1;
+        loadPersons(pageIndex);
+    };
+
     return (
-        <div className="p-4 space-y-6">
+        <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-semibold">Pessoas</h1>
 
-            {/* Card de edição */}
             {editing && (
                 <div className="p-4 border rounded-lg relative bg-gray-50">
                     <button
@@ -48,56 +61,51 @@ export function PersonSection() {
                     </button>
                     <p className="font-medium">Editando:</p>
                     <p>
-                        <strong>{editing.name}</strong> — {editing.cpf}
+                        <strong>{editing.name}</strong> &mdash; {editing.cpf}
                     </p>
                 </div>
             )}
 
-            {/* Formulário: cria ou edita */}
             <PersonForm
                 initialData={editing ?? undefined}
                 onSuccess={() => {
                     setEditing(null);
-                    refresh();
+                    loadPersons(pageData.currentPage);
                 }}
             />
 
-            {/* Lista abaixo */}
-            <table className="w-full table-auto border-collapse">
-                <thead>
-                <tr className="bg-gray-100">
-                    <th className="p-2 border">ID</th>
-                    <th className="p-2 border">Nome</th>
-                    <th className="p-2 border">CPF</th>
-                    <th className="p-2 border">Endereço</th>
-                    <th className="p-2 border">Ações</th>
-                </tr>
-                </thead>
-                <tbody>
-                {list.map((p) => (
-                    <tr key={p.id}>
-                        <td className="p-2 border">{p.id}</td>
-                        <td className="p-2 border">{p.name}</td>
-                        <td className="p-2 border">{p.cpf}</td>
-                        <td className="p-2 border">{p.address}</td>
-                        <td className="p-2 border space-x-2">
-                            <button
-                                className="text-blue-600 hover:underline"
-                                onClick={() => setEditing(p)}
-                            >
-                                Editar
-                            </button>
-                            <button
-                                className="text-red-600 hover:underline"
-                                onClick={() => handleDelete(p.id)}
-                            >
-                                Excluir
-                            </button>
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+            <PaginatedTable<Person>
+                data={pageData.content}
+                currentPage={pageData.currentPage + 1}
+                totalPages={pageData.totalPages}
+                onPageChange={onPageChange}
+                columns={[
+                    { header: "ID", render: (p) => p.id },
+                    { header: "Nome", render: (p) => p.name },
+                    { header: "CPF", render: (p) => p.cpf },
+                    { header: "Endereço", render: (p) => p.address },
+                    {
+                        header: "Ações",
+                        noWrap: true,
+                        render: (p) => (
+                            <div className="flex gap-1">
+                                <button
+                                    className="flex p-2 rounded-md bg-blue-100 text-blue-600 cursor-pointer"
+                                    onClick={() => setEditing(p)}
+                                >
+                                    <Pen weight="fill" className="w-5 h-auto shrink-0" />
+                                </button>
+                                <button
+                                    className="flex p-2 rounded-md bg-red-100 text-red-600 cursor-pointer"
+                                    onClick={() => handleDelete(p.id)}
+                                >
+                                    <Trash weight="fill" className="w-5 h-auto shrink-0" />
+                                </button>
+                            </div>
+                        ),
+                    },
+                ]}
+            />
         </div>
     );
 }

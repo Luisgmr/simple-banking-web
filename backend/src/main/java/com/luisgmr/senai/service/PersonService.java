@@ -7,6 +7,8 @@ import com.luisgmr.senai.utils.CpfValidator;
 import com.luisgmr.senai.utils.ExceptionUtil;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,8 +20,8 @@ public class PersonService {
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
 
-    public List<Person> list() {
-        return repository.findAll();
+    public Page<Person> list(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     @Transactional

@@ -89,7 +89,7 @@ export default function TransactionPage() {
             await createTransaction(values.accountId, { amount: values.amount, type: values.type });
             toastSuccess("Movimentação realizada com sucesso!");
 
-            form.reset({ ...values, amount: undefined });
+            form.setValue("amount", 0)
             onPageChange(1)
 
             getAccountsByPerson(values.personId)
