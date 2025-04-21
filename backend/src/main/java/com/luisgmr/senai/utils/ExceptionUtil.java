@@ -42,4 +42,12 @@ public final class ExceptionUtil {
         throw new IllegalArgumentException("CPF inválido");
     }
 
+    public static void invalidName() {
+        throw new IllegalArgumentException("Nome inválido. Deve conter somente letras.");
+    }
+
+    public static void newAddressEquals() {
+        throw new BusinessException("O novo endereço da pessoa deve ser diferente do endereço atual");
+    }
+
 }

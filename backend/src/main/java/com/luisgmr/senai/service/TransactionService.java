@@ -7,10 +7,11 @@ import com.luisgmr.senai.repository.TransactionRepository;
 import com.luisgmr.senai.exception.InsufficientBalanceException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -43,8 +44,8 @@ public class TransactionService {
         return transaction;
     }
 
-    public List<Transaction> extract(Long accountId) {
+    public Page<Transaction> extract(Long accountId, Pageable pageable) {
         Account account = accountService.find(accountId);
-        return transactionRepository.findByAccount(account);
+        return transactionRepository.findByAccount(account, pageable);
     }
 }

@@ -6,9 +6,9 @@ import com.luisgmr.senai.repository.*;
 import com.luisgmr.senai.utils.ExceptionUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,8 +17,9 @@ public class AccountService {
     private final PersonRepository personRepository;
     private final TransactionRepository transactionRepository;
 
-    public List<Account> list() {
-        return accountRepository.findAll();
+
+    public Page<Account> list(Pageable pageable) {
+        return accountRepository.findAll(pageable);
     }
 
     public Account find(Long id) {

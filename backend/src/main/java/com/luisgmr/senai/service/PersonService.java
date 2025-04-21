@@ -3,13 +3,17 @@ package com.luisgmr.senai.service;
 import com.luisgmr.senai.domain.Account;
 import com.luisgmr.senai.domain.Person;
 import com.luisgmr.senai.repository.*;
-import com.luisgmr.senai.utils.CpfValidator;
+import com.luisgmr.senai.utils.FormatterUtil;
+import com.luisgmr.senai.utils.ValidationUtil;
 import com.luisgmr.senai.utils.ExceptionUtil;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @AllArgsConstructor
 @Service
@@ -18,17 +22,27 @@ public class PersonService {
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
 
-    public List<Person> list() {
-        return repository.findAll();
+    public Page<Person> list(Pageable pageable) {
+        return repository.findAll(pageable);
     }
+
+    public List<Person> search(String term) {
+        return repository.searchByNameOrCpf(term);
+    }
+
 
     @Transactional
     public Person create(Person person) {
-        if (!CpfValidator.isValid(person.getCpf()))
+        if (!ValidationUtil.isValidCpf(person.getCpf()))
             ExceptionUtil.invalidCpf();
 
         if (repository.findByCpf(person.getCpf()).isPresent())
             ExceptionUtil.cpfAlreadyExists();
+
+        if (ValidationUtil.containsNumbers(person.getName()))
+            ExceptionUtil.invalidName();
+
+        person.setName(FormatterUtil.formatName(person.getName()));
 
         return repository.save(person);
     }
@@ -44,18 +58,24 @@ public class PersonService {
     @Transactional
     public Person update(Long id, Person data) {
         Person person = find(id);
-        person.setName(data.getName());
+
+        if (Objects.equals(data.getAddress(), person.getAddress()))
+            ExceptionUtil.newAddressEquals();
+
         person.setAddress(data.getAddress());
         return repository.save(person);
     }
 
     @Transactional
     public void delete(Long id) {
-
-        if (transactionRepository.existsByAccount_Owner_Id(id))
+        Person person = find(id);
+        if (transactionRepository.existsByAccount_Owner(person)) {
             ExceptionUtil.personHasTransactions();
+        } else {
+            accountRepository.deleteAccountsByOwner(person);
+        }
 
-        repository.delete(find(id));
+        repository.delete(person);
     }
 
 }

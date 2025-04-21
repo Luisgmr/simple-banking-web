@@ -4,4 +4,16 @@ const nextConfig: NextConfig = {
     output: 'standalone'
 };
 
+module.exports = {
+    async redirects() {
+        return [
+            {
+                source: '/',
+                destination: '/pessoa',
+                permanent: true,
+            },
+        ];
+    },
+};
+
 export default nextConfig;

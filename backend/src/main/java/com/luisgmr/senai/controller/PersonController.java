@@ -1,16 +1,19 @@
 package com.luisgmr.senai.controller;
 
 import com.luisgmr.senai.dto.PersonDTO;
+import com.luisgmr.senai.dto.request.PersonUpdateRequestDTO;
 import com.luisgmr.senai.dto.response.AccountSelectResponseDTO;
+import com.luisgmr.senai.dto.response.PageResponseDTO;
 import com.luisgmr.senai.mapper.AccountMapper;
 import com.luisgmr.senai.mapper.PersonMapper;
 import com.luisgmr.senai.service.PersonService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -22,8 +25,25 @@ public class PersonController {
     private final AccountMapper accountMapper;
 
     @GetMapping
-    public List<PersonDTO> list() {
-        return service.list().stream().map(personMapper::toDto).collect(Collectors.toList());
+    public PageResponseDTO<PersonDTO> list(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        var result = service.list(pageable);
+        return new PageResponseDTO<>(
+                result.getContent().stream().map(personMapper::toDto).toList(),
+                result.getNumber(),
+                result.getTotalPages(),
+                result.getTotalElements()
+        );
+    }
+
+    @GetMapping("/search")
+    public List<PersonDTO> select(
+            @RequestParam(name = "q", defaultValue = "") String query
+    ) {
+        return service.search(query).stream().map(personMapper::toDto).toList();
     }
 
     @GetMapping("/{id}")
@@ -33,7 +53,7 @@ public class PersonController {
 
     @GetMapping("/{id}/accounts")
     public List<AccountSelectResponseDTO> getAccounts(@PathVariable Long id) {
-        return service.findAccounts(id).stream().map(accountMapper::toSelectResponse).collect(Collectors.toList());
+        return service.findAccounts(id).stream().map(accountMapper::toSelectResponse).toList();
     }
 
     @PostMapping
@@ -43,8 +63,8 @@ public class PersonController {
     }
 
     @PutMapping("/{id}")
-    public PersonDTO update(@PathVariable Long id, @Valid @RequestBody PersonDTO dto) {
-        return personMapper.toDto(service.update(id, personMapper.toEntity(dto)));
+    public PersonDTO update(@PathVariable Long id, @Valid @RequestBody PersonUpdateRequestDTO dto) {
+        return personMapper.toDto(service.update(id, personMapper.updateRequestToEntity(dto)));
     }
 
     @DeleteMapping("/{id}")
