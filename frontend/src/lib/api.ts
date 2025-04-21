@@ -61,33 +61,42 @@ export async function getPaginatedPersons(
     return res.data;
 }
 
-export const getPersons = async (): Promise<Person[]> => {
-    const { data } = await api.get<Person[]>("/persons");
-    return data;
-};
+export async function getPaginatedAccounts(
+    page = 0,
+    size = 5
+): Promise<PageResponse<Account>> {
+    const res = await api.get(`/accounts`, {
+        params: {page, size}
+    });
+    return res.data;
+}
+
+export async function getPersonsSelect(
+    q: string
+): Promise<Person[]> {
+    const res = await api.get(`/persons/search`, {
+        params: {q}
+    });
+    return res.data;
+}
 
 export const createPerson = async (
-    p: Omit<Person, "id">
+    person: Omit<Person, "id">
 ): Promise<Person> => {
-    const { data } = await api.post<Person>("/persons", p);
+    const { data } = await api.post<Person>("/persons", person);
     return data;
 };
 
 export const updatePerson = async (
     id: number,
-    p: Omit<Person, "id">
+    person: Omit<Person, "id">
 ): Promise<Person> => {
-    const { data } = await api.put<Person>(`/persons/${id}`, p);
+    const { data } = await api.put<Person>(`/persons/${id}`, person);
     return data;
 };
 
 export const deletePerson = async (id: number): Promise<void> => {
     await api.delete(`/persons/${id}`);
-};
-
-export const getAccounts = async (): Promise<Account[]> => {
-    const { data } = await api.get<Account[]>("/accounts");
-    return data;
 };
 
 export const getAccountsByPerson = async (accountId: number): Promise<Account[]> => {

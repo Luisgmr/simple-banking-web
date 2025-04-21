@@ -1,7 +1,7 @@
 package com.luisgmr.senai.controller;
 
-import com.luisgmr.senai.domain.Person;
 import com.luisgmr.senai.dto.PersonDTO;
+import com.luisgmr.senai.dto.request.PersonUpdateRequestDTO;
 import com.luisgmr.senai.dto.response.AccountSelectResponseDTO;
 import com.luisgmr.senai.dto.response.PageResponseDTO;
 import com.luisgmr.senai.mapper.AccountMapper;
@@ -39,6 +39,13 @@ public class PersonController {
         );
     }
 
+    @GetMapping("/search")
+    public List<PersonDTO> select(
+            @RequestParam(name = "q", defaultValue = "") String query
+    ) {
+        return service.search(query).stream().map(personMapper::toDto).toList();
+    }
+
     @GetMapping("/{id}")
     public PersonDTO get(@PathVariable Long id) {
         return personMapper.toDto(service.find(id));
@@ -56,8 +63,8 @@ public class PersonController {
     }
 
     @PutMapping("/{id}")
-    public PersonDTO update(@PathVariable Long id, @Valid @RequestBody PersonDTO dto) {
-        return personMapper.toDto(service.update(id, personMapper.toEntity(dto)));
+    public PersonDTO update(@PathVariable Long id, @Valid @RequestBody PersonUpdateRequestDTO dto) {
+        return personMapper.toDto(service.update(id, personMapper.updateRequestToEntity(dto)));
     }
 
     @DeleteMapping("/{id}")

@@ -1,108 +1,110 @@
+// src/app/(both-routes)/conta/components/AccountForm.tsx
 "use client";
 
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import React, {useEffect} from "react";
+import {useForm} from "react-hook-form";
+import {z} from "zod";
+import {zodResolver} from "@hookform/resolvers/zod";
 import {
     Form,
     FormField,
     FormItem,
     FormLabel,
     FormControl,
-    FormMessage
+    FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-    Select,
-    SelectTrigger,
-    SelectValue,
-    SelectContent,
-    SelectItem
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import * as api from "@/lib/api";
-import { toastError, toastSuccess } from "@/lib/utils";
+import {Input} from "@/components/ui/input";
+import {toastError, toastSuccess, formatCpf} from "@/lib/utils";
+import {SearchableSelect} from "@/components/SearchableSelect";
+import {Account, createAccount, getPersonsSelect, Person, updateAccount} from "@/lib/api";
+import {AnimatedButton} from "@/components/AnimatedButton";
 
-// validação Zod
 const accountSchema = z.object({
-    accountNumber: z.string().min(4, "Número obrigatório").regex(/^\d+$/, "Só dígitos"),
-    ownerId: z.number().min(1, "Selecione a pessoa")
+    ownerId: z
+        .number({required_error: "Selecione o titular"})
+        .min(1, "Selecione o titular"),
+    accountNumber: z
+        .string()
+        .min(4, "Número obrigatório")
+        .regex(/^\d+$/, "Só dígitos"),
 });
 type AccountFormData = z.infer<typeof accountSchema>;
 
 export interface AccountFormProps {
-    initialData?: api.Account;
-    onSuccess?: () => void;
+    initialData?: Account,
+    onSuccess?: () => void,
+    resetForm?: () => void
 }
 
-export function AccountForm({ initialData, onSuccess }: AccountFormProps) {
+export function AccountForm({initialData, onSuccess, resetForm}: AccountFormProps) {
+    const isEdit = Boolean(initialData);
+
     const form = useForm<AccountFormData>({
         resolver: zodResolver(accountSchema),
-        defaultValues: {
-            accountNumber: initialData?.accountNumber ?? "",
-            ownerId: initialData?.owner.id ?? undefined
-        }
+        defaultValues: initialData
+            ? {
+                ownerId: initialData.owner.id,
+                accountNumber: initialData.accountNumber,
+            } : {
+                ownerId: undefined,
+                accountNumber: ""
+            },
+
     });
 
-    const [persons, setPersons] = useState<api.Person[]>([]);
+    async function onSubmit(values: AccountFormData) {
+        try {
+            if (isEdit) {
+                await updateAccount(initialData!.id, values);
+                toastSuccess("Conta atualizada com sucesso!");
+            } else {
+                await createAccount(values);
+                toastSuccess("Conta criada com sucesso!");
+            }
+            onSuccess?.();
+            resetForm?.();
+        } catch (err: any) {
+            toastError(err.message);
+        }
+    }
 
     useEffect(() => {
-        api
-            .getPersons()
-            .then(setPersons)
-            .catch((e) => toastError(e.message));
         if (initialData) {
             form.reset({
+                ownerId: initialData.owner.id,
                 accountNumber: initialData.accountNumber,
-                ownerId: initialData.owner.id
             });
         }
     }, [initialData, form]);
 
-    const onSubmit = async (values: AccountFormData) => {
-        try {
-            if (initialData) {
-                await api.updateAccount(initialData.id, values);
-                toastSuccess("Conta atualizada com sucesso!");
-            } else {
-                await api.createAccount(values);
-                toastSuccess("Conta criada com sucesso!");
-            }
-            form.reset();
-            onSuccess?.();
-        } catch (err: any) {
-            toastError(err.message);
-        }
-    };
-
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+            >
                 <FormField
                     control={form.control}
                     name="ownerId"
-                    render={({ field }) => (
+                    render={({field}) => (
                         <FormItem>
                             <FormLabel>Titular</FormLabel>
                             <FormControl>
-                                <Select
-                                    onValueChange={(v) => field.onChange(Number(v))}
-                                    defaultValue={field.value?.toString()}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Selecione a pessoa" />
-                                    </SelectTrigger>
-                                    <SelectContent position={"popper"}>
-                                        {persons.map((p) => (
-                                            <SelectItem key={p.id} value={p.id.toString()}>
-                                                {p.name} — {p.cpf}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <SearchableSelect<Person>
+                                    value={field.value?.toString()}
+                                    onChange={(v) => field.onChange(Number(v))}
+                                    selectPlaceholder="Selecione o titular"
+                                    searchPlaceholder="Busque por nome ou CPF"
+                                    fetchOptions={getPersonsSelect}
+                                    getOptionValue={(p) => p.id.toString()}
+                                    renderOption={(p) => (
+                                        <>
+                                            {p.name} — {formatCpf(p.cpf)}
+                                        </>
+                                    )}
+                                />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage/>
                         </FormItem>
                     )}
                 />
@@ -110,20 +112,30 @@ export function AccountForm({ initialData, onSuccess }: AccountFormProps) {
                 <FormField
                     control={form.control}
                     name="accountNumber"
-                    render={({ field }) => (
+                    render={({field}) => (
                         <FormItem>
                             <FormLabel>Número da Conta</FormLabel>
                             <FormControl>
-                                <Input placeholder="123456" {...field} />
+                                <Input
+                                    placeholder="123456"
+                                    inputMode="numeric"
+                                    maxLength={12}
+                                    {...field}
+                                    onChange={(e) => {
+                                        const only = e.target.value.replace(/\D/g, "");
+                                        field.onChange(only);
+                                    }}
+                                    value={field.value}
+                                />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage/>
                         </FormItem>
                     )}
                 />
 
-                <Button type="submit" className="w-full">
-                    {initialData ? "Salvar" : "Cadastrar"}
-                </Button>
+                <AnimatedButton type="submit" className="w-full">
+                    {isEdit ? "Salvar" : "Cadastrar"}
+                </AnimatedButton>
             </form>
         </Form>
     );

@@ -1,8 +1,8 @@
 package com.luisgmr.senai.utils;
 
-public class CpfValidator {
+public class ValidationUtil {
 
-    public static boolean isValid(String cpf) {
+    public static boolean isValidCpf(String cpf) {
         if (cpf == null || cpf.length() != 11 || cpf.matches("(\\d)\\1{10}")) return false;
 
         try {
@@ -25,6 +25,10 @@ public class CpfValidator {
         } catch (NumberFormatException e) {
             return false;
         }
+    }
+
+    public static boolean containsNumbers(String name) {
+        return name != null && name.matches(".*\\d.*");
     }
 
 }

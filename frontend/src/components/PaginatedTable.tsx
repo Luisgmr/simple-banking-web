@@ -1,21 +1,6 @@
 import React from "react";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/components/ui/pagination";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
+import {Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious,} from "@/components/ui/pagination";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 
 const range = (from: number, to: number) => {
     const result: number[] = [];
@@ -26,27 +11,17 @@ const range = (from: number, to: number) => {
 export type ColumnConfig<T> = {
     header: string;
     render: (item: T) => React.ReactNode;
-    /**
-     * if true, cell will not wrap its content
-     * default: false (allows wrapping)
-     */
-    noWrap?: boolean;
+    fill?: boolean;
 };
 
-export function PaginatedTable<T>({
-                                      data,
-                                      columns,
-                                      currentPage,
-                                      totalPages,
-                                      onPageChange,
-                                  }: {
+export function PaginatedTable<T>({data, columns, currentPage, totalPages, onPageChange}: {
     data: T[];
     columns: ColumnConfig<T>[];
     currentPage: number;
     totalPages: number;
     onPageChange: (page: number) => void;
 }) {
-    const pageNeighbours = 1;
+    const pageNeighbours = 0;
     const totalNumbers = pageNeighbours * 2 + 3;
     const totalBlocks = totalNumbers + 2;
 
@@ -70,17 +45,16 @@ export function PaginatedTable<T>({
     return data.length > 0 ? (
         <div className="bg-white rounded-lg p-3">
             <div className="overflow-x-hidden">
-                {/* Use auto table layout with fixed layout trick for nowrap columns */}
-                <Table className="w-full table-auto">
+                <Table className="w-full table-auto text-xs sm:text-sm">
                     <TableHeader>
                         <TableRow>
                             {columns.map((col, idx) => (
                                 <TableHead
                                     key={idx}
                                     className={
-                                        col.noWrap
-                                            ? 'whitespace-nowrap w-px'
-                                            : 'break-words'
+                                        col.fill
+                                            ? 'w-full'
+                                            : 'w-fit'
                                     }
                                 >
                                     {col.header}
@@ -95,9 +69,9 @@ export function PaginatedTable<T>({
                                     <TableCell
                                         key={cidx}
                                         className={
-                                            col.noWrap
-                                                ? 'whitespace-nowrap w-px'
-                                                : 'break-words'
+                                            col.fill
+                                                ? 'w-full'
+                                                : 'w-fit'
                                         }
                                     >
                                         {col.render(item)}

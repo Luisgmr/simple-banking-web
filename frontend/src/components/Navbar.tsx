@@ -4,15 +4,10 @@ import { usePathname } from "next/navigation";
 import {Bank, CurrencyEth, Users, Wallet} from "phosphor-react";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
-import {useEffect} from "react";
+import { motion } from "framer-motion";
 
 export function Navbar() {
     const path = usePathname();
-
-    useEffect(() => {
-        console.log(path)
-    }, [path]);
-
 
     const routes = [
         { href: "/pessoa", label: "Pessoa", icon: <Users weight={"fill"} /> },
@@ -27,17 +22,24 @@ export function Navbar() {
             </div>
             <div className="bg-white rounded-lg flex gap-2 justify-center w-auto">
                 {routes.map((r) => (
-                    <Link key={r.href} href={r.href} passHref>
-                        <Button
-                            variant={"ghost"}
-                            className={`w-full flex flex-col sm:flex-row gap-1.5 !p-4 text-black text-sm
+                    <motion.div
+                        key={r.href}
+                        whileTap={{scale:0.95}}
+                        whileHover={{ scale:1.05 }}
+                    >
+                        <Link href={r.href} passHref>
+                            <Button
+                                variant={"ghost"}
+                                className={`w-full flex flex-col sm:flex-row gap-1.5 !p-4 text-black text-sm
                             ${path == r.href && (`bg-gray-100`)}
                         `}
-                        >
-                            {r.icon}
-                            <p className="hidden sm:flex">{r.label}</p>
-                        </Button>
-                    </Link>
+                            >
+                                {r.icon}
+                                <p className="hidden sm:flex">{r.label}</p>
+                            </Button>
+                        </Link>
+                    </motion.div>
+
                 ))}
             </div>
         </nav>
