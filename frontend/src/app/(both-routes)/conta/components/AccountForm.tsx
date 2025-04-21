@@ -97,6 +97,7 @@ export function AccountForm({initialData, onSuccess, resetForm}: AccountFormProp
                                     searchPlaceholder="Busque por nome ou CPF"
                                     fetchOptions={getPersonsSelect}
                                     getOptionValue={(p) => p.id.toString()}
+                                    disabled={isEdit}
                                     renderOption={(p) => (
                                         <>
                                             {p.name} — {formatCpf(p.cpf)}

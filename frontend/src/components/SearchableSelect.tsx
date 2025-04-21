@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import {
     Select,
     SelectTrigger,
@@ -8,23 +7,35 @@ import {
     SelectContent,
     SelectItem,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { useDebounce } from "@/lib/utils";
-import { MagnifyingGlass } from "phosphor-react";
+import {Input} from "@/components/ui/input";
+import {useDebounce} from "@/lib/utils";
+import {MagnifyingGlass} from "phosphor-react";
 import {Loader2} from "lucide-react";
+import React from "react";
 
 export interface SearchableSelectProps<T> {
-    value: string | undefined;
-    onChange: (value: string) => void;
-    selectPlaceholder?: string;
-    searchPlaceholder?: string;
-    fetchOptions: (q: string) => Promise<T[]>;
-    renderOption: (option: T) => React.ReactNode;
-    getOptionValue: (option: T) => string;
-    debounceTime?: number;
+    value: string | undefined,
+    onChange: (value: string) => void,
+    selectPlaceholder?: string,
+    searchPlaceholder?: string,
+    fetchOptions: (q: string) => Promise<T[]>,
+    renderOption: (option: T) => React.ReactNode,
+    getOptionValue: (option: T) => string,
+    debounceTime?: number,
+    disabled?: boolean
 }
 
-export function SearchableSelect<T>({value, onChange, selectPlaceholder = "Selecione...", searchPlaceholder = "Pesquise...", fetchOptions, renderOption, getOptionValue, debounceTime = 500,}: SearchableSelectProps<T>) {
+export function SearchableSelect<T>({
+    value,
+    onChange,
+    selectPlaceholder = "Selecione...",
+    searchPlaceholder = "Pesquise...",
+    fetchOptions,
+    renderOption,
+    getOptionValue,
+    debounceTime = 500,
+    disabled = false
+}: SearchableSelectProps<T>) {
     const [open, setOpen] = React.useState(false);
     const [search, setSearch] = React.useState("");
     const debouncedSearch = useDebounce(search, debounceTime);
@@ -60,16 +71,17 @@ export function SearchableSelect<T>({value, onChange, selectPlaceholder = "Selec
             onValueChange={onChange}
             open={open}
             onOpenChange={setOpen}
+            disabled={disabled}
         >
-            <SelectTrigger className="w-full">
-                <SelectValue placeholder={selectPlaceholder} />
+            <SelectTrigger className="w-full cursor-pointer">
+                <SelectValue placeholder={selectPlaceholder}/>
             </SelectTrigger>
 
             <SelectContent position="popper" sideOffset={4}>
                 <div className="p-2">
                     <Input
                         ref={inputRef}
-                        icon={<MagnifyingGlass size={16} weight="bold" />}
+                        icon={<MagnifyingGlass size={16} weight="bold"/>}
                         placeholder={searchPlaceholder}
                         value={search}
                         onChange={(e) => {
@@ -84,7 +96,7 @@ export function SearchableSelect<T>({value, onChange, selectPlaceholder = "Selec
 
                 {loading && (
                     <div className="px-3 py-1 flex items-center gap-1 text-sm text-muted-foreground">
-                        <Loader2 className="animate-spin size-4" />
+                        <Loader2 className="animate-spin size-4"/>
                         <span>Buscando...</span>
                     </div>
                 )}
