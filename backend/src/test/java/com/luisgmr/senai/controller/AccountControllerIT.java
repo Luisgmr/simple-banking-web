@@ -100,7 +100,7 @@ class AccountControllerIT {
 
         mvc.perform(get("/api/accounts"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").exists());
+                .andExpect(jsonPath("$.content[0]").exists());
     }
 
     @Test

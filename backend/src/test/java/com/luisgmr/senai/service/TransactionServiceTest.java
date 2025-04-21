@@ -3,6 +3,8 @@ package com.luisgmr.senai.service;
 import com.luisgmr.senai.domain.Account;
 import com.luisgmr.senai.domain.Transaction;
 import com.luisgmr.senai.exception.InsufficientBalanceException;
+import com.luisgmr.senai.repository.AccountRepository;
+import com.luisgmr.senai.repository.TransactionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,8 +18,10 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class TransactionServiceTest {
+    @Mock private AccountRepository accountRepository;
     @Mock AccountService accountService;
 
+    @Mock private TransactionRepository transactionRepository;
     @InjectMocks TransactionService service;
 
     Account account;
