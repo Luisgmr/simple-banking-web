@@ -134,9 +134,9 @@ export function PersonSection() {
                 totalPages={pageData.totalPages}
                 onPageChange={onPageChange}
                 columns={[
-                    { header: "Nome", render: (p) => p.name },
+                    { header: "Nome", render: (p) => p.name, sortable: true, sortKey: "name" },
                     { header: "CPF", render: (p) => formatCpf(p.cpf) },
-                    { header: "Endereço", fill: true, render: (p) => p.address },
+                    { header: "Endereço", fill: true, render: (p) => p.address, sortable: true, sortKey: "address" },
                     {
                         header: "Ações",
                         render: (person) => (

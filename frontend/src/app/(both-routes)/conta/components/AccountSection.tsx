@@ -139,7 +139,7 @@ export function AccountSection() {
                         header: "CPF",
                         render: (c) => `${formatCpf(c.owner.cpf)}`
                     },
-                    { header: "Número da conta", render: (c) => c.accountNumber },
+                    { header: "Número da conta", sortable:true, sortKey:"accountNumber", render: (c) => c.accountNumber },
                     {
                         header: "Saldo",
                         render: (c) => formatCurrency(c.balance),

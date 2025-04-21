@@ -232,10 +232,14 @@ export default function TransactionPage() {
                             columns={[
                                 {
                                     header: "Data",
-                                    render: (transaction) => new Date(transaction.timestamp).toLocaleString()
+                                    render: (transaction) => new Date(transaction.timestamp).toLocaleString(),
+                                    sortable: true,
+                                    sortKey: "timestamp"
                                 },
                                 {
                                     header: "Valor",
+                                    sortable: true,
+                                    sortKey: "amount",
                                     render: (transaction) => (
                                         <span className={transaction.type === "WITHDRAW" ? "text-red-600" : "text-green-600"}>
                                 {transaction.type === "WITHDRAW" ? "- " : "+ "}{formatCurrency(transaction.amount)}
