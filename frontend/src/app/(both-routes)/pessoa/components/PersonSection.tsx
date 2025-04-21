@@ -123,6 +123,7 @@ export function PersonSection() {
                     onSuccess={() => {
                         setEditing(null);
                         loadPersons(pageData.currentPage);
+                        setFormKey(prev => prev + 1)
                     }}
                 />
             </div>
