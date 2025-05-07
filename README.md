@@ -1,24 +1,10 @@
-# Prova Full-Stack - Júnior - Java
+# Simple Banking Web
 
-__Bem-vindo à prova prática para a vaga de Desenvolvedor Full-Stack Java no SENAI Soluções Digitais!__
+**Um projeto full-stack desenvolvido com Next.js (App Router), React, Java, Spring Boot e Docker, implementado como teste técnico para candidatura a vaga de desenvolvedor.**
 
-Ficamos felizes no seu interesse pela vaga, e desejamos uma ótima prova.
-Leia com atenção toda a documentação e tente desenvolver o máximo que puder, mesmo que tenha que pular alguma etapa, desde que com qualidade e seguindo as regras de negócio.
-
-## Resumo
-
-__O candidato pode escolher entre duas abordagens para a implementação:__
-- __Aplicação Java EE:__ Desenvolver uma aplicação web utilizando __Java EE__ com __JSF__ e __PrimeFaces__, preferencialmente utilizando o servidor __Wildfly__.
-- __Aplicação Frontend e Backend Separados:__ Desenvolver uma aplicação com frontend na tecnologia de sua preferência (como React, Vue.js, Angular, etc.) e backend em Java, utilizando frameworks como Spring Boot ou Quarkus.
-
-A prova consiste em desenvolver as telas modeladas que serão enviadas, respeitando as regras definidas nas imagens.
-
-A definição do layout final e da estrutura do banco de dados fica a critério do candidato, desde que atenda às regras de negócio estabelecidas.
-
-
-# Banking
-
-**Um projeto full-stack desenvolvido com Next.js (App Router), React, Spring Boot e Docker, implementado como teste técnico para candidatura a vaga de desenvolvedor.**
+| Pessoas | Contas | Movimentações |
+|---|---|---|
+| ![image](https://github.com/user-attachments/assets/5907ba73-87b1-4651-8e2f-2359e5a19ff9)| ![image](https://github.com/user-attachments/assets/348b0137-5bc8-444d-99cb-edd18921478b) | ![image](https://github.com/user-attachments/assets/0a63c9d7-4986-4a7b-8e9d-64ce8949f8ec) |
 
 ---
 
@@ -189,7 +175,7 @@ cd backend && ./mvnw clean test
 
 Este projeto demonstra:
 
-- Domínio de **Next.js 13 App Router** e **React 18**
+- Domínio de **Java com Spring Boot**, **Next.js 13 App Router** e **React 18**
 - Uso de **design system** e **acessibilidade** (Radix UI)
 - Integração frontend-backend com **axios** e **paginção**
 - **Testes** unitários e integração
