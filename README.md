@@ -1,6 +1,6 @@
 # Simple Banking Web
 
-**Um projeto full-stack desenvolvido com Next.js (App Router), React, Java, Spring Boot e Docker, implementado como teste técnico para candidatura a vaga de desenvolvedor.**
+**Um projeto full-stack desenvolvido com Next.js (App Router), React, Java, Spring Boot e Docker, implementado como teste técnico.**
 
 | Pessoas | Contas | Movimentações |
 |---|---|---|
