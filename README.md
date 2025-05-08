@@ -64,6 +64,10 @@ Esta aplicação simula um sistema bancário básico com cadastro de **Pessoas**
 - **DTOs e PageResponse** para paginação de recursos
 - **Clean Code**: composição de hooks, utilitários (`utils.ts`), organização por domínio, controle de exceptions
 
+| Arquitetura de implantação |
+|---|
+| ![image](https://github.com/user-attachments/assets/c36ad05d-a630-434b-865c-d69acaef54f6) |
+
 ---
 
 ## 🛠️ Tech Stack
